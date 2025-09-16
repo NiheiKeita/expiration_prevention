@@ -19,7 +19,11 @@ class LoginController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Web/Login', [
+        if (Auth::check()) {
+            return Inertia::location(route('coupons.index'));
+        }
+
+        return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
         ]);
@@ -52,6 +56,6 @@ class LoginController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('user.login');
     }
 }

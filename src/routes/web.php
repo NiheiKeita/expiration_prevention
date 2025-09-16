@@ -6,8 +6,11 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Web\CouponController;
 use App\Http\Controllers\Web\LoginController;
-use App\Http\Controllers\Web\PasswordController;
 use App\Http\Middleware\VerifyCsrfToken;
 
 /*
@@ -23,15 +26,23 @@ use App\Http\Middleware\VerifyCsrfToken;
 
 Route::group(['middleware' => 'basicauth'], function () {
     Route::fallback(function () {
-        return redirect(route('web.top'));
+        return redirect()->route('coupons.index');
     });
 
-    Route::middleware('guest.web')->group(function () {
-        Route::get('password/edit/{token}', [PasswordController::class, 'edit'])->name('web.password.edit');
-        Route::post('password/edit/{token}', [PasswordController::class, 'update'])->name('web.password.update');
-    });
     Route::get('login', [LoginController::class, 'create'])->name('user.login');
     Route::post('login', [LoginController::class, 'store']);
+    Route::get('register', [RegisteredUserController::class, 'create'])->name('user.register');
+    Route::post('register', [RegisteredUserController::class, 'store'])->name('user.register.store');
+    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
+
+    Route::middleware('auth')->group(function () {
+        Route::post('logout', [LoginController::class, 'destroy'])->name('user.logout');
+        Route::patch('coupons/{coupon}/toggle', [CouponController::class, 'toggle'])->name('coupons.toggle');
+        Route::resource('coupons', CouponController::class);
+    });
 
 
     //管理画面側

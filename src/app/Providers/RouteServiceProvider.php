@@ -25,7 +25,7 @@ class RouteServiceProvider extends ServiceProvider
     public const USERS = '/admin/users';
     public const PROPERTIES = '/admin/properties';
     public const MA_PROPERTIES = '/admin/ma_properties';
-    public const WEB_PROPERTIES = '/properties';
+    public const WEB_PROPERTIES = '/coupons';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
